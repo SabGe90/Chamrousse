@@ -1,459 +1,688 @@
 <!DOCTYPE html>
 <html lang="de">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Geburtstag</title>
+  <title>Skireise nach Chamrousse</title>
 
   <style>
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      text-align: center;
-      font-family: Arial, sans-serif;
-
-      background: linear-gradient(
-        135deg,
-        #1b1530,
-        #3a2158
-      );
-
-      color: white;
-      overflow: hidden;
-    }
-
-
-    .container {
-      width: 100%;
-      padding: 30px;
-
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-
+    * {
       box-sizing: border-box;
     }
 
+    body {
+      margin: 0;
+      min-height: 100svh;
+      font-family: Arial, sans-serif;
+      color: white;
+      background: #163d53;
+      overflow-x: hidden;
+    }
 
-    /* Geburtstagstext */
-
-    .birthday-text {
-      opacity: 0;
-      transform: translateY(30px);
-
-      transition:
-        opacity 1.5s ease,
-        transform 1.5s ease;
-
-      max-width: 750px;
-
-      position: absolute;
+    .scene {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
       pointer-events: none;
+      background: linear-gradient(
+        #12364b,
+        #527e94 58%,
+        #b7d1dd
+      );
     }
 
+    .landscape {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      inset: 0;
+    }
 
-    .birthday-text.visible {
-      opacity: 1;
-      transform: translateY(0);
+    main {
       position: relative;
+      z-index: 2;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: 48px 22px 220px;
+      text-align: center;
     }
 
-
-    .birthday-text h1 {
-      font-size: clamp(
-        2.3rem,
-        7vw,
-        4.5rem
-      );
-
-      margin-top: 0;
-      margin-bottom: 30px;
+    .card {
+      width: 100%;
+      max-width: 720px;
+      padding: 40px 32px;
+      border: 1px solid #ffffff35;
+      border-radius: 26px;
+      background: #10344894;
+      box-shadow: 0 24px 80px #08253628;
+      backdrop-filter: blur(10px);
     }
 
+    .eyebrow {
+      margin: 0 0 24px;
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #c4e2eb;
+    }
 
-    .birthday-text p {
-      font-size: clamp(
-        1.1rem,
-        3vw,
-        1.4rem
-      );
+    h1 {
+      margin: 0 0 24px;
+      font-size: clamp(2.2rem, 7vw, 4.8rem);
+      letter-spacing: -0.05em;
+      line-height: 1.08;
+    }
 
-      line-height: 1.6;
+    h1 span {
+      color: #e4c697;
+    }
+
+    p {
       margin: 16px 0;
+      font-size: clamp(1.05rem, 2.6vw, 1.2rem);
+      line-height: 1.7;
+      color: #e3eff4;
     }
 
-
-    .signature {
-      margin-top: 30px !important;
+    .line {
+      width: 46px;
+      height: 2px;
+      margin: 26px auto;
+      background: #e4c697;
     }
 
-
-    /* Startbutton */
+    .caption {
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
 
     button {
-      padding: 16px 30px;
-      font-size: 1.2rem;
-
+      padding: 17px 28px;
       border: none;
-      border-radius: 30px;
-
+      border-radius: 99px;
+      background: #f0dcc0;
+      color: #153d52;
+      font: 700 1rem Arial, sans-serif;
       cursor: pointer;
-
-      background: white;
-      color: #3a2158;
-
-      transition:
-        transform 0.2s ease,
-        opacity 0.4s ease;
+      transition: transform 0.2s;
     }
-
 
     button:hover {
-      transform: scale(1.05);
+      transform: translateY(-3px);
     }
 
+    button:focus-visible {
+      outline: 3px solid white;
+      outline-offset: 5px;
+    }
 
-    /* Ballons */
+    [hidden] {
+      display: none !important;
+    }
 
-    .balloon {
+    .message {
+      animation: appear 1s ease both;
+    }
+
+    /* Schnee */
+
+    .snow {
       position: fixed;
-      bottom: -100px;
-
-      font-size: 55px;
-
-      animation: fly 6s linear forwards;
-
+      inset: 0;
+      z-index: 3;
+      overflow: hidden;
       pointer-events: none;
-      z-index: 10;
     }
 
+    .flake {
+      position: absolute;
+      top: -20px;
+      border-radius: 50%;
+      background: white;
+      animation: snowfall linear infinite;
+    }
 
-    @keyframes fly {
+    /* Fahrer */
 
+    .rider {
+      position: fixed;
+      left: -160px;
+      bottom: 40px;
+      width: 120px;
+      height: 120px;
+      z-index: 4;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .started .skier {
+      visibility: visible;
+      animation: ski-run 12s linear infinite;
+    }
+
+    .started .snowboarder {
+      visibility: visible;
+      animation: board-run 14s linear infinite;
+    }
+
+    .person {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 7px 4px #1d536626);
+      animation: bend 1.8s ease-in-out infinite;
+    }
+
+    .spray {
+      fill: white;
+      opacity: 0.8;
+    }
+
+    @keyframes appear {
       from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+
+      to {
+        opacity: 1;
         transform: translateY(0);
       }
+    }
 
+    @keyframes snowfall {
       to {
-        transform: translateY(-120vh);
+        transform: translate(60px, 110vh);
+      }
+    }
+
+    @keyframes ski-run {
+      0% {
+        transform: translate(0, -100px);
       }
 
-    }
-
-
-    /* FAHRSCHULAUTO */
-
-    .fahrschulauto {
-      position: fixed;
-
-      left: -180px;
-      bottom: 25px;
-
-      z-index: 20;
-
-      animation: autofahrt 8s linear forwards;
-
-      pointer-events: none;
-    }
-
-
-    .auto {
-      font-size: 70px;
-      line-height: 1;
-    }
-
-
-    .fahrschule {
-      display: inline-block;
-
-      background: white;
-      color: #222;
-
-      font-size: 11px;
-      font-weight: bold;
-
-      padding: 3px 7px;
-      border-radius: 4px;
-
-      margin-bottom: -4px;
-    }
-
-
-    @keyframes autofahrt {
-
-      from {
-        left: -180px;
+      50% {
+        transform: translate(
+          calc(50vw + 80px),
+          -20px
+        );
       }
 
-      to {
-        left: calc(100vw + 180px);
+      100% {
+        transform: translate(
+          calc(100vw + 320px),
+          20px
+        );
       }
-
     }
 
+    @keyframes board-run {
+      0% {
+        transform: translate(0, -35px);
+      }
 
-    /* Smartphone */
+      45% {
+        transform: translate(
+          calc(45vw + 80px),
+          20px
+        );
+      }
+
+      55% {
+        transform: translate(
+          calc(55vw + 80px),
+          -25px
+        ) rotate(-8deg);
+      }
+
+      65% {
+        transform: translate(
+          calc(65vw + 80px),
+          25px
+        );
+      }
+
+      100% {
+        transform: translate(
+          calc(100vw + 320px),
+          65px
+        );
+      }
+    }
+
+    @keyframes bend {
+      50% {
+        transform: rotate(-5deg) translateY(-3px);
+      }
+    }
 
     @media (max-width: 600px) {
-
-      .container {
-        padding: 20px;
+      main {
+        padding: 30px 18px 205px;
       }
 
-
-      .birthday-text {
-        max-width: 95%;
+      .card {
+        padding: 30px 18px;
       }
 
-
-      .birthday-text h1 {
-        font-size: 2.2rem;
-        margin-bottom: 20px;
+      .eyebrow {
+        font-size: 0.65rem;
+        letter-spacing: 0.13em;
       }
-
-
-      .birthday-text p {
-        font-size: 1.05rem;
-        line-height: 1.5;
-        margin: 12px 0;
-      }
-
-
-      .signature {
-        margin-top: 22px !important;
-      }
-
-
-      button {
-        font-size: 1.1rem;
-        padding: 15px 26px;
-      }
-
-
-      .auto {
-        font-size: 55px;
-      }
-
     }
 
-
-    /* Kleine Smartphones */
-
     @media (max-height: 650px) {
+      main {
+        padding-bottom: 150px;
+      }
 
-      .birthday-text h1 {
-        font-size: 1.8rem;
+      .card {
+        padding: 24px 18px;
+      }
+
+      .eyebrow {
         margin-bottom: 14px;
       }
 
-
-      .birthday-text p {
-        font-size: 0.95rem;
-        line-height: 1.4;
-        margin: 9px 0;
+      p {
+        margin: 12px 0;
+        font-size: 1rem;
       }
-
-
-      .signature {
-        margin-top: 15px !important;
-      }
-
     }
 
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+
+      .rider,
+      .flake {
+        display: none;
+      }
+    }
   </style>
-
 </head>
-
 
 <body>
 
+  <!-- Verschneite Berge -->
 
-  <div class="container">
-
-
-    <div
-      id="birthdayText"
-      class="birthday-text"
+  <div class="scene" aria-hidden="true">
+    <svg
+      class="landscape"
+      viewBox="0 0 1440 1000"
+      preserveAspectRatio="xMidYMax slice"
     >
+      <circle
+        cx="1150"
+        cy="160"
+        r="63"
+        fill="#ffe6ba"
+      />
 
-      <h1>
-        Aaaalles, alles Gute zum 45. Geburtstag, Malte! 🎉🥳
-      </h1>
+      <path
+        fill="#688da1"
+        d="M-130 690 180 255 400 550 650 195
+           970 600 1190 310 1570 760V1000H-130Z"
+      />
 
+      <path
+        fill="#dce9ee"
+        d="m180 255-111 157 93-45 41 48 27-44 77 56Z
+           m470-60-134 206 98-61 45 58 37-61 86 61Z
+           m540 115-91 132 75-37 42 44 18-35 58 34Z"
+      />
 
-      <p>
-        Ich wünsche dir ein richtig schönes neues Lebensjahr
-        mit ganz viel Spaß, tollen Erlebnissen und vielen
-        Momenten, an die du gerne zurückdenkst.
-      </p>
+      <path
+        fill="#375f77"
+        d="m-100 850 315-370 230 281 370-390
+           325 399 215-240 240 340v130H-100Z"
+      />
 
+      <path
+        fill="#eef5f7"
+        d="m215 480-91 107 79-31 38 37 26-29 47 35Z
+           m600-109L666 529l103-42 55 49 37-61 75 44Z
+           m540 159-74 82 58-19 33 29 19-21 35 31Z"
+      />
 
-      <p>
-        Schön, dass es dich gibt. ❤️
-      </p>
+      <path
+        fill="#c7dce5"
+        d="M-100 885Q270 620 655 800T1550 755V1100H-100Z"
+      />
 
+      <path
+        fill="#f4f8fa"
+        d="M-100 900Q420 705 850 900T1600 800V1100H-100Z"
+      />
 
-      <p class="signature">
-        Hab dich lieb!<br>
-        Sabrina
-      </p>
+      <!-- Skispuren -->
 
+      <path
+        fill="none"
+        stroke="#aecbd7"
+        stroke-width="3"
+        opacity="0.6"
+        d="M360 830q-130 25 25 55t-50 80
+           m65-132q-130 25 25 55t-50 80"
+      />
 
-      <p>
-        PS: Ich geb dir nachher einen aus :)
-      </p>
+      <!-- Tannen -->
 
+      <g fill="#214c5b">
+        <path
+          d="m90 695-27 59h17l-28 45h26l-32 53h91
+             l-33-53h26l-28-45h16Z"
+        />
 
-    </div>
+        <path
+          d="m1260 712-22 50h14l-25 43h22l-29 48h80
+             l-29-48h22l-25-43h14Z"
+        />
 
-
-    <!-- Musik -->
-
-    <audio id="musik" loop>
-
-      <source
-        src="music.mp3"
-        type="audio/mpeg"
-      >
-
-    </audio>
-
-
-    <!-- Startbutton -->
-
-    <button id="musikButton">
-      🎵 Überraschung :)
-    </button>
-
-
+        <path
+          d="m1320 745-15 33h9l-17 29h15l-20 33h55
+             l-20-33h15l-17-29h9Z"
+        />
+      </g>
+    </svg>
   </div>
 
+  <div
+    class="snow"
+    id="snow"
+    aria-hidden="true"
+  ></div>
+
+  <main>
+    <section class="card" aria-label="Skireise">
+
+      <div id="intro">
+        <p class="eyebrow">
+          Chamrousse · Französische Alpen
+        </p>
+
+        <h1>
+          Ab nach<br>
+          <span>Chamrousse.</span>
+        </h1>
+
+        <p>
+          Zeit für Schnee unter den Brettern<br>
+          und Bergluft im Gesicht.
+        </p>
+
+        <div class="line"></div>
+
+        <button id="start" type="button">
+          Ab auf die Piste
+        </button>
+      </div>
+
+      <div
+        class="message"
+        id="message"
+        hidden
+        tabindex="-1"
+      >
+        <p class="eyebrow">
+          Unsere Skireise · Ski &amp; Snowboard
+        </p>
+
+        <h1>
+          Chamrousse.<br>
+          <span>Wir kommen.</span>
+        </h1>
+
+        <p>
+          Verschneite Gipfel, frische Bergluft<br>
+          und gemeinsam die Pisten runter.
+        </p>
+
+        <div class="line"></div>
+
+        <p>
+          Auf eine schöne gemeinsame Zeit in Chamrousse!
+        </p>
+
+        <p class="caption">
+          Bretter an. Alltag aus.
+        </p>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Vorlage Skifahrer -->
+
+  <div class="rider skier" aria-hidden="true">
+    <svg class="person" viewBox="0 0 150 150">
+      <g
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path
+          class="spray"
+          d="m33 124-25-11 19 2-13-13 30 17Z"
+        />
+
+        <path
+          d="m25 131 106 0q9 0 12-6
+             m-109-4h96q8 0 10-6"
+          stroke="#153e55"
+          fill="none"
+          stroke-width="4"
+        />
+
+        <path
+          d="m67 87 24 16-15 19
+             m6-37 23 16-12 20"
+          stroke="#22384b"
+          fill="none"
+          stroke-width="10"
+        />
+
+        <path
+          d="m62 61 21 25"
+          stroke="#ed8e61"
+          stroke-width="21"
+        />
+
+        <path
+          d="m64 63-20 17 15 11
+             m12-25 23 7 17 19"
+          stroke="#ed8e61"
+          fill="none"
+          stroke-width="8"
+        />
+
+        <path
+          d="m58 91 9 33m43-33 15 33"
+          stroke="#44677c"
+          stroke-width="2"
+        />
+
+        <circle
+          cx="61"
+          cy="41"
+          r="12"
+          fill="#edc8aa"
+        />
+
+        <path
+          d="M47 40a14 14 0 0 1 28-1Z"
+          fill="#193b52"
+        />
+
+        <path
+          d="m60 41 15 0"
+          stroke="#8ed7de"
+          stroke-width="6"
+        />
+      </g>
+    </svg>
+  </div>
+
+  <!-- Vorlage Snowboardfahrer -->
+
+  <div class="rider snowboarder" aria-hidden="true">
+    <svg class="person" viewBox="0 0 150 150">
+      <g
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path
+          class="spray"
+          d="m32 124-25-7 18-3-12-10 31 15Z"
+        />
+
+        <path
+          d="M26 128q48 15 99-2"
+          stroke="#c47b73"
+          fill="none"
+          stroke-width="9"
+        />
+
+        <path
+          d="m62 87-11 16 9 22
+             m16-38 21 17-7 23"
+          stroke="#243a50"
+          fill="none"
+          stroke-width="11"
+        />
+
+        <path
+          d="m64 59 8 28"
+          stroke="#72bfb7"
+          stroke-width="23"
+        />
+
+        <path
+          d="m64 63-23 14-17-5
+             m51-7 18 15 24-6"
+          stroke="#72bfb7"
+          fill="none"
+          stroke-width="8"
+        />
+
+        <circle
+          cx="61"
+          cy="39"
+          r="12"
+          fill="#edc8aa"
+        />
+
+        <path
+          d="M47 38a14 14 0 0 1 28-1Z"
+          fill="#243a50"
+        />
+
+        <path
+          d="m61 39 13 0"
+          stroke="#f0cd8e"
+          stroke-width="6"
+        />
+      </g>
+    </svg>
+  </div>
 
   <script>
+    // Fünf Skifahrer und fünf Snowboardfahrer.
 
-    const musik =
-      document.getElementById("musik");
+    const jacketColors = [
+      "#ed8e61",
+      "#72bfb7",
+      "#e8bb59",
+      "#a7a2df",
+      "#da839c"
+    ];
 
-    const button =
-      document.getElementById("musikButton");
+    for (const [kind, originalColor] of [
+      ["skier", "#ed8e61"],
+      ["snowboarder", "#72bfb7"]
+    ]) {
+      const original = document.querySelector("." + kind);
 
-    const birthdayText =
-      document.getElementById("birthdayText");
+      for (let i = 1; i < 5; i++) {
+        const rider = original.cloneNode(true);
 
+        const colorIndex = (
+          i + (kind === "skier" ? 0 : 1)
+        ) % jacketColors.length;
 
-    button.addEventListener(
-      "click",
-      function () {
-
-        // Musik
-        musik.play();
-
-
-        // Button weg
-        button.style.display = "none";
-
-
-        // Text einblenden
-        setTimeout(() => {
-
-          birthdayText.classList.add(
-            "visible"
-          );
-
-        }, 500);
-
-
-        // Ballons
-        for (let i = 0; i < 15; i++) {
-
-          setTimeout(
-            createBalloon,
-            i * 300
-          );
-
-        }
-
-
-        // Fahrschulauto nach kurzer Zeit
-        setTimeout(
-          createFahrschulauto,
-          1800
+        rider.innerHTML = rider.innerHTML.replaceAll(
+          originalColor,
+          jacketColors[colorIndex]
         );
 
+        const size = 78 + i * 9;
+
+        Object.assign(rider.style, {
+          width: size + "px",
+          height: size + "px",
+          bottom: 18 + i * 22 + "px",
+
+          animationDuration:
+            (
+              12 + i * 2.3 +
+              (kind === "skier" ? 0 : 1.4)
+            ) + "s",
+
+          animationDelay:
+            -(
+              i * 3.1 +
+              (kind === "skier" ? 0 : 1.6)
+            ) + "s"
+        });
+
+        document.body.appendChild(rider);
       }
+    }
+
+    // Schneefall.
+
+    const snow = document.getElementById("snow");
+
+    for (let i = 0; i < 48; i++) {
+      const flake = document.createElement("span");
+      flake.className = "flake";
+
+      const size = 2 + Math.random() * 4;
+
+      Object.assign(flake.style, {
+        left: Math.random() * 100 + "%",
+        width: size + "px",
+        height: size + "px",
+        animationDuration: (8 + Math.random() * 12) + "s",
+        animationDelay: (-Math.random() * 20) + "s",
+        opacity: 0.2 + Math.random() * 0.6
+      });
+
+      snow.appendChild(flake);
+    }
+
+    // Text und Fahrer nach dem Klick einblenden.
+
+    document.getElementById("start").addEventListener(
+      "click",
+      () => {
+        document.getElementById("intro").hidden = true;
+
+        const message = document.getElementById("message");
+
+        message.hidden = false;
+        message.focus({ preventScroll: true });
+
+        document.body.classList.add("started");
+      },
+      { once: true }
     );
-
-
-    function createBalloon() {
-
-      const balloon =
-        document.createElement("div");
-
-      balloon.classList.add("balloon");
-
-      balloon.innerText = "🎈";
-
-      balloon.style.left =
-        Math.random() * 95 + "vw";
-
-      document.body.appendChild(balloon);
-
-
-      setTimeout(() => {
-
-        balloon.remove();
-
-      }, 7000);
-
-    }
-
-
-    function createFahrschulauto() {
-
-      const fahrzeug =
-        document.createElement("div");
-
-      fahrzeug.classList.add(
-        "fahrschulauto"
-      );
-
-
-      fahrzeug.innerHTML = `
-        <div class="fahrschule">
-          FAHRSCHULE
-        </div>
-
-        <div class="auto">
-          🚗
-        </div>
-      `;
-
-
-      document.body.appendChild(
-        fahrzeug
-      );
-
-
-      setTimeout(() => {
-
-        fahrzeug.remove();
-
-      }, 9000);
-
-    }
-
   </script>
 
-
 </body>
-
 </html>
